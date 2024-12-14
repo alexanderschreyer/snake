@@ -2,10 +2,9 @@ package src.gui;
 
 import gui.Window;
 import src.logic.SnakeGame;
-import src.logic.Controls;
 
 public class Main {
-    private static final Resolution RES = Resolution.RES_400;
+    private static final Resolution RES = Resolution.RES_600;
     private static final int WIDTH = RES.getWidth();
     private static final int HEIGHT = RES.getHeight();
     private static final String NAME = "Snake";
@@ -17,13 +16,9 @@ public class Main {
         gui.open();
 
         while (gui.isOpen()) {
-
-            Controls.handleEvents(gui);
-
-            game.drawTiles(gui);
-
+            game.handleEvents(gui);
+            game.drawGame(gui);
             gui.refreshAndClear(10);
         }
-
     }
 }

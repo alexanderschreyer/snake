@@ -54,4 +54,8 @@ public class Grid {
     public Tile getStartTile() {
         return tiles[tiles.length / 2];
     }
+
+    public int getStartTileIndex() {
+        return (tiles.length / 2);
+    }
 }

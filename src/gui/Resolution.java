@@ -3,6 +3,7 @@ package src.gui;
 public enum Resolution {
     // Square-shaped aspect ratios
     RES_400(400),
+    RES_600(600),
     RES_800(800),
     RES_1024(1024),
 
