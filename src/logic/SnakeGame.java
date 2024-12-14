@@ -74,7 +74,7 @@ public class SnakeGame {
 
     public void step() {
         steps += 1;
-        if (steps % 5 == 0) {
+        if (steps % 10 == 0) {
             player.saveLastTile();
             player.move(grid);
             player.adjustAppendices();

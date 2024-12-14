@@ -126,8 +126,9 @@ public class Player extends AbstractGameObj {
 
     private void drawScore(Window window) {
         window.setColor(Colors.FONT.getColor());
+        window.setBold(true);;
         window.setFontSize(15);
-        window.drawString("SCORE: " + score, 10, 20);
+        window.drawString("SCORE: " + score, 11, 25);
     }
 
     public void addAppendix(Apple apple) {
