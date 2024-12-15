@@ -148,13 +148,13 @@ public class Player extends AbstractGameObj {
     private void drawAppendices(Window window) {
         if (appendices != null && appendices.size() > 0) {
             // Draws every appendix except for the last one
-            window.setColor(Colors.SNAKE_BODY.getColor());
+            window.setColor(Colors.SNAKE_HEAD.getColor());
             for (int i = 0; (i < appendices.size() - 1); i++) {
                 Tile appendix = appendices.get(i);
                 window.fillRect(appendix.getX(), appendix.getY(), appendix.getTileWidth(), appendix.getTileHeight());
             }
             // Draws the last appendix ('tail')
-            window.setColor(Colors.SNAKE_BODY.getColor());
+            window.setColor(Colors.SNAKE_HEAD.getColor());
             Tile lastAppendix = appendices.get(appendices.size() - 1);
             window.fillRect(lastAppendix.getX(), lastAppendix.getY(), lastAppendix.getTileWidth(), lastAppendix.getTileHeight());
         }
@@ -167,9 +167,9 @@ public class Player extends AbstractGameObj {
         window.drawString("SCORE: " + score, 11, 25);
     }
 
-    public void addAppendices(ArrayList<Apple> apples) {
-        for (Apple apple : apples) {
-            appendices.add(apple.getLocation());
+    public void addAppendices(ArrayList<Food> foods) {
+        for (Food food : foods) {
+            appendices.add(food.getLocation());
         }
     }
 

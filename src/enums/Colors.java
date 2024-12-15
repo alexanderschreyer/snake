@@ -3,7 +3,7 @@ package src.enums;
 import gui.Color;
 
 public enum Colors {
-    APPLE(141, 11, 65),
+    FOOD(231, 41, 41),
     BACKGROUND(229, 225, 218),
     BACKGROUND_CACTUS(209, 205, 208),
     FONT(138, 131, 110),

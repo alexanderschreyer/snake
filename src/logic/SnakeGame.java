@@ -6,6 +6,7 @@ import gui.Window;
 import src.gameobjects.Player;
 import src.enums.Colors;
 import src.enums.Direction;
+import src.gameobjects.Food;
 import src.gameobjects.Apple;
 // import src.gameobjects.Obstacle;
 
@@ -14,8 +15,9 @@ public class SnakeGame {
     private int height;
     private Grid grid;
     private Player player;
+    private Food food;
     private Apple apple;
-    private ArrayList<Apple> eatenApples;
+    private ArrayList<Food> foodEaten;
     private int steps;
 
     // private ArrayList<Obstacle> obstacles;
@@ -48,8 +50,8 @@ public class SnakeGame {
 
     private void initializeGameState() {
         player = new Player(grid);
-        apple = new Apple(grid);
-        eatenApples = new ArrayList<Apple>();
+        food = new Food(grid);
+        foodEaten = new ArrayList<Food>();
         /*
         obstacles = new ArrayList<Obstacle>();
         for (int i = 1; i <= 6; i++) {
@@ -71,7 +73,6 @@ public class SnakeGame {
     }
 
     public void handlePlayerControls(Window window) {
-        // Player movement
         if (window.isKeyPressed("w") && player.getDirection() != Direction.SOUTH) {
             player.setDirection(Direction.NORTH);
         } else if (window.isKeyPressed("a") && player.getDirection() != Direction.EAST) {
@@ -108,8 +109,8 @@ public class SnakeGame {
                 countTwo += 1;
             }
             if (justEaten == true && countOne == countTwo) {
-                player.addAppendices(eatenApples);
-                eatenApples.removeAll(eatenApples);
+                player.addAppendices(foodEaten);
+                foodEaten.removeAll(foodEaten);
                 justEaten = false;
                 countTwo = 0;
             }
@@ -120,11 +121,12 @@ public class SnakeGame {
 
     private void checkApple() {
         String playerLoc = (player.getLocation()).getTileName();
-        String appleLoc = (apple.getLocation()).getTileName();
-        if (playerLoc.equals(appleLoc)) {
-            player.setScore(player.getScore() + apple.getValue());
-            eatenApples.add(apple);
-            apple = new Apple(grid);
+        String foodLoc = (food.getLocation()).getTileName();
+        // String appleLoc = (apple.getLocation()).getTileName();
+        if (playerLoc.equals(foodLoc)) {
+            player.setScore(player.getScore() + food.getValue());
+            foodEaten.add(food);
+            food = new Food(grid);
             countOne += 1;
             justEaten = true;
         }
@@ -141,13 +143,14 @@ public class SnakeGame {
 
     public void drawGame(Window window) {
         drawBackground(window);
-        // drawTiles(window);
+        drawTiles(window);
         /*
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(window);
         }
         */
-        apple.draw(window);
+        food.draw(window);
+        // apple.draw(window);
         player.draw(window);
         if (pause) {
             drawPause(window);
