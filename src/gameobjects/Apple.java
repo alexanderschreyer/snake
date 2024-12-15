@@ -6,15 +6,15 @@ import src.logic.Grid;
 import src.logic.Tile;
 
 public class Apple extends AbstractGameObj {
+    private int value;
     
     public Apple(Grid ref) {
         location = assignRandomLocation(ref);
+        value = 10;
     }
 
-    private Tile assignRandomLocation(Grid ref) {
-        Double randDouble = Math.random() * ref.getColumns() * ref.getColumns();
-        int randInt = randDouble.intValue();
-        return (ref.getTiles())[randInt];
+    public int getValue() {
+        return value;
     }
 
     @Override

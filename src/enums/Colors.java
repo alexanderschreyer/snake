@@ -4,9 +4,15 @@ import gui.Color;
 
 public enum Colors {
     APPLE(141, 11, 65),
-    BACKGROUND(232, 236, 215),
-    FONT(211, 157, 85),
-    SNAKE(71, 102, 59);
+    BACKGROUND(229, 225, 218),
+    BACKGROUND_CACTUS(209, 205, 208),
+    FONT(138, 131, 110),
+    // FONT(165, 157, 132),
+    // FONT(211, 157, 85),
+    SNAKE_HEAD(75, 89, 69),
+    SNAKE_BODY(71, 102, 59),
+    SNAKE_TAIL(242, 159, 88),
+    SNAKE_EYES(250, 250, 250);
 
     private Color color;
 

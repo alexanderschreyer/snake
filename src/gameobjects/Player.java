@@ -84,12 +84,8 @@ public class Player extends AbstractGameObj {
         location = ref.getTiles()[index];
     }
 
-    /*
-     * Handles collision with array bounds, is not
-     * (yet) functional with 'collisions' with western
-     * and eastern map border
-     */
     private void handleBounds(Grid ref) {
+        // Handles northern and southern map border
         if (!(index >= 0 && index < (ref.getTiles()).length)) {
             int diff = 0;
             if (index < 0) {
@@ -104,35 +100,77 @@ public class Player extends AbstractGameObj {
 
     @Override
     public void draw(Window window) {
-        drawScore(window);
-        drawPlayer(window);
         drawAppendices(window);
+        drawPlayer(window);
+        drawScore(window);
     }
 
     
     private void drawPlayer(Window window) {
-        window.setColor(Colors.SNAKE.getColor());
-        window.fillRect(location.getX() + 1, location.getY() + 1, location.getTileWidth() - 2, location.getTileHeight() - 2);
+        window.setColor(Colors.SNAKE_HEAD.getColor());
+        window.fillRect(location.getX(), location.getY(), location.getTileWidth(), location.getTileHeight());
+        drawEyes(window);
+    }
+
+    private void drawEyes(Window window) {
+        int eyeDim = 4;
+        int eyeLeftX = 0;
+        int eyeLeftY = 0;
+        int eyeRightX = 0;
+        int eyeRightY = 0;
+        if (direction == Direction.NORTH) {
+            eyeLeftX = location.getX() + 5;
+            eyeLeftY = location.getY() + 4;
+            eyeRightX = location.getX() + location.getTileWidth() - 10;
+            eyeRightY = location.getY() + 4;
+        } else if (direction == Direction.SOUTH) {
+            eyeLeftX = location.getX() + 5;
+            eyeLeftY = location.getY() + location.getTileHeight() - 8;
+            eyeRightX = location.getX() + location.getTileWidth() - 10;
+            eyeRightY = location.getY() + location.getTileHeight() - 8;
+        } else if (direction == Direction.WEST) {
+            eyeLeftX = location.getX() + 4;
+            eyeLeftY = location.getY() + 5;
+            eyeRightX = location.getX() + 4;
+            eyeRightY = location.getY() + location.getTileHeight() - 10;
+        } else if (direction == Direction.EAST) {
+            eyeLeftX = location.getX() + location.getTileWidth() - 8;
+            eyeLeftY = location.getY() + 5;
+            eyeRightX = location.getX() + location.getTileWidth() - 8;
+            eyeRightY = location.getY() + location.getTileHeight() - 10;
+        }
+        window.setColor(Colors.SNAKE_EYES.getColor());
+        window.fillRect(eyeLeftX, eyeLeftY, eyeDim, eyeDim);
+        window.fillRect(eyeRightX, eyeRightY, eyeDim, eyeDim);
+
     }
     
     private void drawAppendices(Window window) {
-        if (appendices != null) {
-            for (Tile appendix : appendices) {
-                window.setColor(Colors.SNAKE.getColor());
-                window.fillRect(appendix.getX() + 1, appendix.getY() + 1, appendix.getTileWidth() - 2, appendix.getTileHeight() - 2);
+        if (appendices != null && appendices.size() > 0) {
+            // Draws every appendix except for the last one
+            window.setColor(Colors.SNAKE_BODY.getColor());
+            for (int i = 0; (i < appendices.size() - 1); i++) {
+                Tile appendix = appendices.get(i);
+                window.fillRect(appendix.getX(), appendix.getY(), appendix.getTileWidth(), appendix.getTileHeight());
             }
+            // Draws the last appendix ('tail')
+            window.setColor(Colors.SNAKE_BODY.getColor());
+            Tile lastAppendix = appendices.get(appendices.size() - 1);
+            window.fillRect(lastAppendix.getX(), lastAppendix.getY(), lastAppendix.getTileWidth(), lastAppendix.getTileHeight());
         }
     }
 
-    private void drawScore(Window window) {
+    public void drawScore(Window window) {
         window.setColor(Colors.FONT.getColor());
         window.setBold(true);;
         window.setFontSize(15);
         window.drawString("SCORE: " + score, 11, 25);
     }
 
-    public void addAppendix(Apple apple) {
-        appendices.add(apple.getLocation());
+    public void addAppendices(ArrayList<Apple> apples) {
+        for (Apple apple : apples) {
+            appendices.add(apple.getLocation());
+        }
     }
 
     public void adjustAppendices() {
