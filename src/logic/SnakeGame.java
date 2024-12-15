@@ -63,27 +63,27 @@ public class SnakeGame {
     }
 
     public void handleEvents(Window window) {
-        handleInput(window);
+        handleMenuControls(window);
         if (!pause && !gameOver) {
+            handlePlayerControls(window);
             step();
         }
     }
 
-    public void handleInput(Window window) {
+    public void handlePlayerControls(Window window) {
         // Player movement
         if (window.isKeyPressed("w") && player.getDirection() != Direction.SOUTH) {
             player.setDirection(Direction.NORTH);
-        }
-        if (window.isKeyPressed("a") && player.getDirection() != Direction.EAST) {
+        } else if (window.isKeyPressed("a") && player.getDirection() != Direction.EAST) {
             player.setDirection(Direction.WEST);
-        }
-        if (window.isKeyPressed("s") && player.getDirection() != Direction.NORTH) {
+        } else if (window.isKeyPressed("s") && player.getDirection() != Direction.NORTH) {
             player.setDirection(Direction.SOUTH);
-        }
-        if (window.isKeyPressed("d") && player.getDirection() != Direction.WEST) {
+        } else if (window.isKeyPressed("d") && player.getDirection() != Direction.WEST) {
             player.setDirection(Direction.EAST);
         }
-        // Menu interaction
+    }
+
+    private void handleMenuControls(Window window) {
         if (window.isKeyPressed("escape") && !pause && !gameOver) {
             pause = true;
         }
