@@ -8,7 +8,6 @@ import src.enums.Colors;
 import src.enums.Direction;
 import src.gameobjects.Food;
 import src.gameobjects.Apple;
-import src.logic.Randomizer;
 
 public class SnakeGame {
     private int width;

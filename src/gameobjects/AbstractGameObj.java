@@ -1,7 +1,6 @@
 package src.gameobjects;
 
 import gui.Window;
-import src.logic.Grid;
 import src.logic.Tile;
 
 public abstract class AbstractGameObj {

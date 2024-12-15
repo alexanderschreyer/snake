@@ -2,7 +2,6 @@ package src.gameobjects;
 
 import gui.Window;
 import src.enums.Colors;
-import src.logic.Grid;
 import src.logic.Tile;
 
 public class Food extends AbstractGameObj {
