@@ -1,6 +1,7 @@
-package src.gui;
+
 
 import gui.Window;
+import src.enums.Resolution;
 import src.logic.SnakeGame;
 
 public class Main {

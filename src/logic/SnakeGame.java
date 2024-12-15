@@ -8,7 +8,7 @@ import src.enums.Colors;
 import src.enums.Direction;
 import src.gameobjects.Food;
 import src.gameobjects.Apple;
-// import src.gameobjects.Obstacle;
+import src.logic.Randomizer;
 
 public class SnakeGame {
     private int width;
@@ -18,16 +18,16 @@ public class SnakeGame {
     private Food food;
     private Apple apple;
     private ArrayList<Food> foodEaten;
-    private int steps;
-
-    // private ArrayList<Obstacle> obstacles;
-    
     private boolean justEaten;
-    private int countOne;
-    private int countTwo;
 
-    private boolean pause = false;
-    private boolean gameOver = false;
+    private int stepCount;
+    private int stepCountSinceEaten;
+    private int foodCount;
+    private int foodCountPipeline;
+
+    private boolean start;
+    private boolean pause;
+    private boolean gameOver;
 
     public SnakeGame (int width, int height) {
         this.width = width;
@@ -50,48 +50,51 @@ public class SnakeGame {
 
     private void initializeGameState() {
         player = new Player(grid);
-        food = new Food(grid);
+        spawnFood();
+        apple = null;
         foodEaten = new ArrayList<Food>();
-        /*
-        obstacles = new ArrayList<Obstacle>();
-        for (int i = 1; i <= 6; i++) {
-            obstacles.add(new Obstacle(grid));
-        }
-         */
-        steps = 0;
-        countOne = 0;
-        countTwo = 0;
+        stepCount = 0;
+        foodCountPipeline = 0;
+        stepCountSinceEaten = 0;
+        foodCount = 1;
+        start = true;
+        pause = false;
         gameOver = false;
     }
 
     public void handleEvents(Window window) {
         handleMenuControls(window);
-        if (!pause && !gameOver) {
+        if (!pause && !gameOver && !start) {
             handlePlayerControls(window);
             step();
         }
     }
 
     public void handlePlayerControls(Window window) {
-        if (window.isKeyPressed("w") && player.getDirection() != Direction.SOUTH) {
+        if (window.isKeyPressed("w") && player.getDirection() != Direction.SOUTH && player.hasMoved()) {
             player.setDirection(Direction.NORTH);
-        } else if (window.isKeyPressed("a") && player.getDirection() != Direction.EAST) {
+            player.setHasMoved(false);
+        } else if (window.isKeyPressed("a") && player.getDirection() != Direction.EAST && player.hasMoved()) {
             player.setDirection(Direction.WEST);
-        } else if (window.isKeyPressed("s") && player.getDirection() != Direction.NORTH) {
+            player.setHasMoved(false);
+        } else if (window.isKeyPressed("s") && player.getDirection() != Direction.NORTH && player.hasMoved()) {
             player.setDirection(Direction.SOUTH);
-        } else if (window.isKeyPressed("d") && player.getDirection() != Direction.WEST) {
+            player.setHasMoved(false);
+        } else if (window.isKeyPressed("d") && player.getDirection() != Direction.WEST && player.hasMoved()) {
             player.setDirection(Direction.EAST);
+            player.setHasMoved(false);
         }
     }
 
     private void handleMenuControls(Window window) {
-        if (window.isKeyPressed("escape") && !pause && !gameOver) {
+        if (window.isKeyPressed("escape") && !pause && !gameOver && !start) {
             pause = true;
         }
-        if (window.isKeyPressed("space") && pause) {
+        if (window.isKeyPressed("space") && (pause || start)) {
             pause = false;
+            start = false;
         }
-        if (window.isKeyPressed("x") && (pause || gameOver)) {
+        if (window.isKeyPressed("x") && (pause || gameOver || start)) {
             System.exit(0);
         }
         if (window.isKeyPressed("r")  && gameOver) {
@@ -100,35 +103,73 @@ public class SnakeGame {
     }
 
     public void step() {
-        steps += 1;
-        if (steps % 10 == 0) {
+        stepCount += 1;
+        if (stepCount % 10 == 0) {
             player.saveLastTile();
             player.move(grid);
+            player.setHasMoved(true);
             player.adjustAppendices();
             if (justEaten) {
-                countTwo += 1;
+                stepCountSinceEaten += 1;
             }
-            if (justEaten == true && countOne == countTwo) {
+            if (justEaten && foodCountPipeline == stepCountSinceEaten) {
                 player.addAppendices(foodEaten);
                 foodEaten.removeAll(foodEaten);
                 justEaten = false;
-                countTwo = 0;
+                foodCountPipeline = 0;
+                stepCountSinceEaten = 0;
             }
+            checkFood();
             checkApple();
             checkCollision();
         }
     }
 
-    private void checkApple() {
+    private void spawnFood() {
+        Tile randTile = Randomizer.randomizedLocation(grid, player);
+        food = new Food(randTile);
+    }
+
+    private void spawnApple() {
+        Tile randTile = Randomizer.randomizedLocation(grid, player);
+        apple = new Apple(randTile);
+    }
+
+    private void checkFood() {
         String playerLoc = (player.getLocation()).getTileName();
         String foodLoc = (food.getLocation()).getTileName();
-        // String appleLoc = (apple.getLocation()).getTileName();
         if (playerLoc.equals(foodLoc)) {
             player.setScore(player.getScore() + food.getValue());
             foodEaten.add(food);
-            food = new Food(grid);
-            countOne += 1;
+            spawnFood();
+            foodCount += 1;
+            if (foodCount % 10 == 0) {
+                spawnApple();
+            }
+            foodCountPipeline += 1;
             justEaten = true;
+        }
+    }
+
+    private void checkApple() {
+        if (apple != null) {
+            if (stepCount % 200 == 0) {
+                apple.decreaseValue();
+                if (apple.getValue() == 0) {
+                    apple = null;
+                } 
+            }
+        }
+        if (apple != null) {
+            String playerLoc = (player.getLocation()).getTileName();
+            String appleLoc = (apple.getLocation()).getTileName();
+            if (playerLoc.equals(appleLoc)) {
+                player.setScore(player.getScore() + apple.getValue());
+                foodEaten.add(apple);
+                apple = null;
+                foodCountPipeline += 1;
+                justEaten = true;
+            }
         }
     }
 
@@ -143,15 +184,15 @@ public class SnakeGame {
 
     public void drawGame(Window window) {
         drawBackground(window);
-        drawTiles(window);
-        /*
-        for (Obstacle obstacle : obstacles) {
-            obstacle.draw(window);
-        }
-        */
+        // drawTiles(window);
         food.draw(window);
-        // apple.draw(window);
+        if (apple != null) {
+            apple.draw(window);
+        }
         player.draw(window);
+        if (start) {
+            drawStart(window);
+        }
         if (pause) {
             drawPause(window);
         }
@@ -160,25 +201,39 @@ public class SnakeGame {
         }
     }
 
+    private void drawStart(Window window) {
+        drawBackground(window);
+        window.setColor(Colors.FONT_2.getColor());
+        window.setFontSize(50);
+        window.drawStringCentered("SNAKE", width / 2, height / 2);
+        window.setColor(Colors.FONT_1.getColor());
+        window.setFontSize(20);
+        window.drawStringCentered("Press SPACE to start, press X to end the game", width / 2, height / 3 * 1.8);
+        window.setBold(false);
+        window.setFontSize(10);
+        window.drawStringCentered("A. SCHREYER, 2024", width / 2, 25);
+    }
+
     private void drawPause(Window window) {
         drawBackground(window);
         player.drawScore(window);
-        window.setColor(Colors.FONT.getColor());
+        window.setColor(Colors.FONT_2.getColor());
         window.setFontSize(50);
         window.drawStringCentered("PAUSE", width / 2, height / 2);
+        window.setColor(Colors.FONT_1.getColor());
         window.setFontSize(20);
-        window.drawStringCentered("Press space to continue, press x to end the game", width / 2, height / 3 * 1.7);
+        window.drawStringCentered("Press SPACE to continue, press X to end the game", width / 2, height / 3 * 1.8);
     }
 
     private void drawGameOver(Window window) {
         drawBackground(window);
         player.drawScore(window);
-        window.setColor(Colors.FONT.getColor());
+        window.setColor(Colors.FONT_2.getColor());
         window.setFontSize(50);
         window.drawStringCentered("GAME OVER", width / 2, height / 2);
+        window.setColor(Colors.FONT_1.getColor());
         window.setFontSize(20);
-        window.drawStringCentered("Press r to restart, press x to end the game", width / 2, height / 3 * 1.7);
-        
+        window.drawStringCentered("Press R to restart, press X to end the game", width / 2, height / 3 * 1.8);
     }   
 
     private void drawBackground(Window window) {

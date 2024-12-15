@@ -3,12 +3,13 @@ package src.gameobjects;
 import gui.Window;
 import src.enums.Colors;
 import src.logic.Grid;
+import src.logic.Tile;
 
 public class Food extends AbstractGameObj {
     protected int value;
 
-    public Food(Grid ref) {
-        location = assignRandomLocation(ref);
+    public Food(Tile location) {
+        this.location = location;
         value = 10;
     }
 
@@ -28,19 +29,4 @@ public class Food extends AbstractGameObj {
         // bottom
         window.fillRect(location.getX() + 9, location.getY() + location.getTileHeight() - 8, location.getTileWidth() - 18, 5);
     }
-
-    /*
-    @Override
-    public void draw(Window window) {
-        window.setColor(Colors.FOOD.getColor());
-        // left
-        window.fillRect(location.getX() + 5, location.getY() + 10, 5, location.getTileHeight() - 20);
-        // right
-        window.fillRect(location.getX() + location.getTileWidth() - 10, location.getY() + 10, 5, location.getTileHeight() - 20);
-        // top
-        window.fillRect(location.getX() + 10, location.getY() + 5, location.getTileWidth() - 20, 5);
-        // bottom
-        window.fillRect(location.getX() + 10, location.getY() + location.getTileHeight() - 10, location.getTileWidth() - 20, 5);
-    }
-     */
 }

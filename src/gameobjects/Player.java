@@ -14,6 +14,7 @@ public class Player extends AbstractGameObj {
     private ArrayList<Tile> appendices;
     private ArrayList<Tile> prev;
     private Tile last;
+    private boolean hasMoved;
 
     public Player(Grid ref) {
         location = ref.getStartTile();
@@ -43,6 +44,14 @@ public class Player extends AbstractGameObj {
         this.score = score;
     }
 
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
+
     public void move(Grid ref) {
         switch (direction) {
             case NORTH:
@@ -62,30 +71,34 @@ public class Player extends AbstractGameObj {
 
     private void moveLeft(Grid ref) {
         index -= 1;
-        handleBounds(ref);
+        handleBorders(ref);
         location = ref.getTiles()[index];
     }
 
     private void moveRight(Grid ref) {
         index += 1;
-        handleBounds(ref);
+        handleBorders(ref);
         location = ref.getTiles()[index];
     }
 
     private void moveUp(Grid ref) {
         index -= ref.getColumns();
-        handleBounds(ref);
+        handleBorders(ref);
         location = ref.getTiles()[index];
     }
 
     private void moveDown(Grid ref) {
         index += ref.getColumns();
-        handleBounds(ref);
+        handleBorders(ref);
         location = ref.getTiles()[index];
     }
 
-    private void handleBounds(Grid ref) {
-        // Handles northern and southern map border
+    private void handleBorders(Grid ref) {
+        handleNorthSouth(ref);
+        handleWestEast(ref);
+    }
+
+    private void handleNorthSouth(Grid ref) {
         if (!(index >= 0 && index < (ref.getTiles()).length)) {
             int diff = 0;
             if (index < 0) {
@@ -94,6 +107,20 @@ public class Player extends AbstractGameObj {
             } else if (index > (ref.getTiles()).length - 1) {
                 diff = index - (ref.getTiles()).length;
                 index = 0 + diff;
+            }
+        }
+    }
+
+    private void handleWestEast(Grid ref) {
+        if (index % 25 == 0 && direction == Direction.EAST) {
+            index -= 25;
+            if (index < 0) {
+                index = 600;
+            }
+        } else if ((index + 1) % 25 == 0 && direction == Direction.WEST) {
+            index += 25;
+            if (index > 624) {
+                index = 24;
             }
         }
     }
@@ -147,21 +174,16 @@ public class Player extends AbstractGameObj {
     
     private void drawAppendices(Window window) {
         if (appendices != null && appendices.size() > 0) {
-            // Draws every appendix except for the last one
             window.setColor(Colors.SNAKE_HEAD.getColor());
-            for (int i = 0; (i < appendices.size() - 1); i++) {
+            for (int i = 0; i < appendices.size(); i++) {
                 Tile appendix = appendices.get(i);
                 window.fillRect(appendix.getX(), appendix.getY(), appendix.getTileWidth(), appendix.getTileHeight());
             }
-            // Draws the last appendix ('tail')
-            window.setColor(Colors.SNAKE_HEAD.getColor());
-            Tile lastAppendix = appendices.get(appendices.size() - 1);
-            window.fillRect(lastAppendix.getX(), lastAppendix.getY(), lastAppendix.getTileWidth(), lastAppendix.getTileHeight());
         }
     }
 
     public void drawScore(Window window) {
-        window.setColor(Colors.FONT.getColor());
+        window.setColor(Colors.FONT_1.getColor());
         window.setBold(true);;
         window.setFontSize(15);
         window.drawString("SCORE: " + score, 11, 25);

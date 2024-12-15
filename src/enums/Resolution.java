@@ -1,4 +1,4 @@
-package src.gui;
+package src.enums;
 
 public enum Resolution {
     // Square-shaped aspect ratios
