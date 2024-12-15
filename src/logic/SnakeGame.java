@@ -7,7 +7,7 @@ import src.gameobjects.Player;
 import src.enums.Colors;
 import src.enums.Direction;
 import src.gameobjects.Apple;
-import src.gameobjects.Obstacle;
+// import src.gameobjects.Obstacle;
 
 public class SnakeGame {
     private int width;
@@ -18,7 +18,7 @@ public class SnakeGame {
     private ArrayList<Apple> eatenApples;
     private int steps;
 
-    private ArrayList<Obstacle> obstacles;
+    // private ArrayList<Obstacle> obstacles;
     
     private boolean justEaten;
     private int countOne;
